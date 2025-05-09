@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # --- Model Loading ---
-MODEL_LOAD_PATH = 'effnet.keras' # Make sure this file is in the same directory or provide the correct path
+MODEL_LOAD_PATH = 'effnet.h5' # Make sure this file is in the same directory or provide the correct path
 loaded_model = None
 
 try:
