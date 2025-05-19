@@ -29,6 +29,11 @@ users = {
     "test@example.com": {"password": "password", "name": "Test User"}
 }
 
+@app.route('/', methods=['GET'])
+def homepage():
+    """Simple homepage to test server connection."""
+    return '<h2>Braimer Deploy Server is running.</h2>', 200
+
 @app.route('/login', methods=['POST'])
 def login():
     """Handles user login."""
