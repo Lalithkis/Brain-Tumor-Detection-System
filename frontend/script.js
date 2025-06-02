@@ -6,18 +6,50 @@ function $(id) {
 }
 
 // Configuration (Consider moving to a separate config file or environment variables for production)
-const API_BASE_URL = 'http://127.0.0.1:5000/'; // Use '' for relative paths (same origin), or e.g., 'https://your-api-domain.com'
+const CONFIG = {
+    API_BASE_URL: 'http://127.0.0.1:5000/' // Use '' for relative paths (same origin), or e.g., 'https://your-api-domain.com'
+};
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
+// Toast Notification System
+function showToast(message, type = 'info') {
+    let toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.setAttribute('aria-live', 'polite');
+        toast.setAttribute('role', 'status');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '2rem';
+        toast.style.right = '2rem';
+        toast.style.zIndex = '9999';
+        toast.style.minWidth = '220px';
+        toast.style.padding = '1rem 1.5rem';
+        toast.style.borderRadius = '8px';
+        toast.style.boxShadow = '0 2px 12px rgba(0,0,0,0.15)';
+        toast.style.fontWeight = 'bold';
+        toast.style.fontSize = '1rem';
+        toast.style.transition = 'opacity 0.3s';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.background = type === 'error' ? '#ff6f61' : (type === 'success' ? '#4CAF50' : '#222e3c');
+    toast.style.color = '#fff';
+    toast.style.opacity = '1';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+    }, 3000);
+}
 
 // Login Function
 function login() {
     const email = $('login-email')?.value.trim();
     const password = $('login-password')?.value;
     if (!email || !password) {
-        // TODO: Replace alert with a more user-friendly notification system
-        alert('Please enter both email and password.');
+        showToast('Please enter both email and password.', 'error');
         return;
     }
-    fetch(`${API_BASE_URL}/login`, { // Using relative path or configured base URL
+    fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -26,14 +58,12 @@ function login() {
         if (response.ok) {
             window.location.href = 'dashboard.html';
         } else {
-            // TODO: Replace alert with a more user-friendly notification system
-            alert('Invalid credentials');
+            showToast('Invalid credentials', 'error');
         }
     })
     .catch(error => {
         console.error('Login Error:', error);
-        // TODO: Replace alert with a more user-friendly notification system
-        alert('An error occurred during login. Please try again later.');
+        showToast('An error occurred during login. Please try again later.', 'error');
     });
 }
 
@@ -138,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (file) {
                     // Basic file type validation (optional, but good practice)
                     if (!file.type.startsWith('image/')) {
-                        alert('Please upload a valid image file (e.g., JPG, PNG).');
+                        showToast('Please upload a valid image file (e.g., JPG, PNG).', 'error');
                         imageUpload.value = ''; // Reset file input
                         return;
                     }
@@ -153,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
                     reader.onerror = function() {
                         console.error("FileReader error.");
-                        alert("Error reading file. Please try again.");
+                        showToast("Error reading file. Please try again.", 'error');
                         loadingMessage.style.display = 'none';
                     };
                     reader.readAsDataURL(file);
@@ -206,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadingMessage.style.display = 'none';
                     detectionResult.textContent = 'Error during analysis: ' + error.message;
                     detectionResult.style.display = 'block';
+                    showToast('Error during analysis: ' + error.message, 'error');
                 });
             }
         } else {
@@ -237,8 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Basic email format validation
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailPattern.test(email)) {
-                    // TODO: Replace alert with a more user-friendly notification system
-                    alert('Please enter a valid email address.');
+                    showToast('Please enter a valid email address.', 'error');
                     emailInput?.focus(); // Focus on the email field
                     return;
                 }
@@ -249,12 +279,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (!isValid) {
-                // TODO: Replace alert with a more user-friendly notification system
-                alert(`Please fill out all required fields: ${missingFields.join(', ')}.`);
+                showToast(`Please fill out all required fields: ${missingFields.join(', ')}.`, 'error');
                 return;
             }
-            // TODO: Replace alert with a more user-friendly notification system
-            alert('Thank you for your message! (This is a demo, form data is not sent).');
+            showToast('Thank you for your message! (This is a demo, form data is not sent).', 'success');
             contactForm.reset();
         });
     }

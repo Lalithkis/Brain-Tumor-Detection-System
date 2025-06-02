@@ -544,3 +544,11 @@ body.animated-bg.light-theme {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     transition: background 0.3s, color 0.3s;
 }
+
+/* Toast Notification */
+#toast-notification {
+    font-family: var(--font-family);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
