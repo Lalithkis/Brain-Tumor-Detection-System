@@ -70,6 +70,10 @@ body {
     font-size: 16px; /* Base font size */
     --global-spacing-unit: 1rem; /* Base unit for spacing */
     animation: fadeInPage 0.8s ease-out forwards;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 @keyframes fadeInPage {
@@ -792,6 +796,7 @@ body.animated-bg {
     margin: calc(var(--global-spacing-unit) * 1.5) auto 0 auto; /* Use spacing unit */
     padding: calc(var(--global-spacing-unit) * 1.5) calc(var(--global-spacing-unit) * 2); /* Use spacing unit */
     border-radius: 16px 16px 0 0; /* Match header */
+    margin-top: auto;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.08); /* Softer shadow */
     background: var(--glass-bg);
     max-width: 1300px; /* Increased max-width */
