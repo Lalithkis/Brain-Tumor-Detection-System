@@ -1,31 +1,62 @@
-/* Advanced Color Scheme */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Modern Color Scheme */
 :root {
-    --primary-color: #222e3c;
-    --secondary-color: #00bfff;
-    --background-color: #181c24;
-    --text-color: #e0e6ed;
-    --light-gray: #2a2f3a;
-    --dark-gray: #11151c;
-    --card-bg: rgba(34, 46, 60, 0.85);
-    --glass-bg: rgba(34, 46, 60, 0.55);
-    --glass-border: rgba(0, 191, 255, 0.18);
-    --font-family: 'Roboto', Arial, sans-serif;
+    /* Dark Theme */
+    --primary-color-dark: #0A4A7A; /* Deep Blue */
+    --secondary-color-dark: #20C997; /* Teal */
+    --accent-color-dark: #A8B2C2; /* Light Blue-Gray */
+    --background-color-dark: #12181F; /* Darker Background */
+    --text-color-dark: #E0E6ED; /* Light Text for Dark BG */
+    --card-bg-dark: rgba(20, 30, 40, 0.75); /* Darker, Less Transparent Card */
+    --glass-bg-dark: rgba(20, 30, 40, 0.6); /* Darker Glass */
+    --glass-border-dark: rgba(32, 201, 151, 0.25); /* Teal Border for Glass */
+    --hover-color-dark: #106096; /* Slightly Lighter Blue for Hover */
+
+    /* Light Theme */
+    --primary-color-light: #FFFFFF; /* White Background */
+    --secondary-color-light: #0A4A7A; /* Deep Blue Text/Accents */
+    --accent-color-light: #20C997; /* Teal Accents */
+    --background-color-light: #F0F4F8; /* Light Gray Background */
+    --text-color-light: #1A202C; /* Dark Text for Light BG */
+    --card-bg-light: rgba(255, 255, 255, 0.9); /* Light, Slightly Transparent Card */
+    --glass-bg-light: rgba(255, 255, 255, 0.7); /* Lighter Glass */
+    --glass-border-light: rgba(10, 74, 122, 0.3); /* Blue Border for Glass */
+    --hover-color-light: #E2E8F0; /* Light Gray for Hover */
+
+    /* Global */
+    --font-family: 'Poppins', Arial, sans-serif;
+    --line-height-base: 1.7;
+    --letter-spacing-heading: 0.05em;
+
+    /* Apply Dark Theme by Default */
+    --primary-color: var(--primary-color-dark);
+    --secondary-color: var(--secondary-color-dark);
+    --accent-color: var(--accent-color-dark);
+    --background-color: var(--background-color-dark);
+    --text-color: var(--text-color-dark);
+    --text-color-muted: #909db0; /* Muted text for placeholders, etc. */
+    --card-bg: var(--card-bg-dark);
+    --glass-bg: var(--glass-bg-dark);
+    --glass-border: var(--glass-border-dark);
+    --hover-color: var(--hover-color-dark);
 }
 
 :root.light-theme {
-    --primary-color: #f7fafc;
-    --secondary-color: #6ca0dc;
-    --background-color: #f4f7fb;
-    --text-color: #2d3748;
-    --light-gray: #e9eef6;
-    --dark-gray: #cfd8e3;
-    --card-bg: rgba(255,255,255,0.97);
-    --glass-bg: rgba(255,255,255,0.82);
-    --glass-border: rgba(108, 160, 220, 0.18);
+    --primary-color: var(--primary-color-light);
+    --secondary-color: var(--secondary-color-light);
+    --accent-color: var(--accent-color-light);
+    --background-color: var(--background-color-light);
+    --text-color: var(--text-color-light);
+    --text-color-muted: #5a677a; /* Muted text for light theme */
+    --card-bg: var(--card-bg-light);
+    --glass-bg: var(--glass-bg-light);
+    --glass-border: var(--glass-border-light);
+    --hover-color: var(--hover-color-light);
 }
 
 body.theme-toggle {
-    transition: background 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* General Styles */
@@ -35,91 +66,276 @@ body {
     padding: 0;
     background-color: var(--background-color);
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: var(--line-height-base);
+    font-size: 16px; /* Base font size */
+    --global-spacing-unit: 1rem; /* Base unit for spacing */
+    animation: fadeInPage 0.8s ease-out forwards;
 }
+
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typographic Scale */
+h1, .h1 {
+    font-size: 2.5rem; /* Was 2rem or 2.5rem */
+    font-weight: 700;
+    letter-spacing: var(--letter-spacing-heading);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+h2, .h2 {
+    font-size: 2rem; /* Was 1.5rem in media query */
+    font-weight: 600;
+    letter-spacing: var(--letter-spacing-heading);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+h3, .h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+p, .p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+a, .a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover, .a:hover {
+    color: var(--accent-color);
+}
+
 
 header {
-    background-color: var(--primary-color);
+    background-color: transparent; /* Make header transparent, rely on main-header */
     color: var(--text-color);
-    padding: 1rem 0;
+    padding: 0; /* Remove padding, handled by main-header */
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: none; /* Remove shadow, handled by main-header */
 }
 
-header h1 {
+header h1 { /* This might be for old header structure, review if needed */
     margin: 0;
-    font-size: 2rem;
+    font-size: 2rem; /* Adjusted in h1 styles */
 }
 
-nav {
+nav { /* This might be for old nav structure, review if needed */
     margin: 1rem 0;
 }
 
-nav a {
-    color: var(--text-color);
+nav a { /* This might be for old nav structure, review if needed */
+    color: var(--text-color); /* Will be overridden by .main-nav a */
     text-decoration: none;
     margin: 0 1rem;
-    font-weight: bold;
+    font-weight: bold; /* Adjusted in .main-nav a */
     transition: color 0.3s;
 }
 
-nav a:hover {
-    color: var(--secondary-color);
+nav a:hover { /* This might be for old nav structure, review if needed */
+    color: var(--secondary-color); /* Will be overridden by .main-nav a:hover */
 }
 
 main {
-    padding: 2rem;
-    max-width: 1200px;
+    padding: calc(var(--global-spacing-unit) * 2); /* Use spacing unit */
+    max-width: 1300px; /* Increased max-width */
     margin: 0 auto;
 }
 
 footer {
-    background-color: var(--primary-color);
+    background-color: transparent; /* Make footer transparent, rely on main-footer */
     color: var(--text-color);
     text-align: center;
-    padding: 1rem 0;
+    padding: 0; /* Remove padding, handled by main-footer */
     position: relative;
     bottom: 0;
     width: 100%;
 }
 
-/* Responsive Layout */
+/* Responsive Layout - Typographic Adjustments & More */
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 1.5rem;
+    h1, .h1 {
+        font-size: 2rem; /* Base h1 for tablets/general small screens */
     }
-
-    nav a {
+    h2, .h2 {
+        font-size: 1.75rem; /* Base h2 for tablets */
+    }
+    h3, .h3 {
+        font-size: 1.375rem; /* Base h3 for tablets */
+    }
+    main {
+        padding: calc(var(--global-spacing-unit) * 1.5); /* Adjusted mobile padding */
+    }
+    nav a { /* Old nav, if any */
         margin: 0 0.5rem;
     }
 
-    main {
-        padding: 1rem;
+    /* Header and Nav */
+    .main-header .header-content {
+        flex-direction: column; /* Stack logo/title and nav */
+        align-items: center; /* Center items */
+        gap: var(--global-spacing-unit);
+    }
+    .main-nav {
+        width: 100%;
+        justify-content: center; /* Center nav items */
+        gap: var(--global-spacing-unit) * 0.5; /* Smaller gap for nav items */
+    }
+    .main-nav a {
+        padding: 0.7rem 1rem; /* Ensure good touch targets */
+    }
+
+    /* Features Section - 2 columns for tablets */
+    .features .feature {
+        flex-basis: calc(50% - (var(--global-spacing-unit) * 1.5)); /* 2 columns, accounting for gap */
+        min-width: 0; /* Reset min-width if previously set */
+    }
+
+    /* Footer */
+    .main-footer .footer-content {
+        flex-direction: column; /* Stack logo/text and nav */
+        align-items: center; /* Center items */
+        gap: var(--global-spacing-unit);
+    }
+    .footer-nav {
+        width: 100%;
+        justify-content: center; /* Center nav items */
+        gap: var(--global-spacing-unit) * 0.5;
+    }
+     .footer-nav a {
+        padding: 0.5rem 0.8rem; /* Ensure good touch targets */
+    }
+
+    /* Team section cards - already stack at 768px due to flex properties, this is fine */
+    /* Glass card padding already adjusted in this query */
+}
+
+/* Smaller Mobile Breakpoint */
+@media (max-width: 520px) {
+    .main-header .header-content h1 { /* Site title */
+        font-size: 1.5rem; /* Smaller site title */
+        text-align: center;
+    }
+     .main-header .header-content .logo-icon {
+        font-size: 1.6rem;
+        margin-right: 0.3rem;
+    }
+    .main-nav a {
+        padding: 0.6rem 0.8rem; /* Adjust padding for very small screens */
+        font-size: 0.9rem; /* Slightly smaller font for nav links */
+    }
+
+    .hero-section h1 {
+        font-size: 1.8rem; /* Adjust hero title */
+    }
+    .hero-section p {
+        font-size: 0.95rem; /* Adjust hero paragraph */
+    }
+    .hero-section .cta-button {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+
+    /* Features Section - 1 column for mobile */
+    .features .feature {
+        flex-basis: 100%; /* Single column */
+    }
+    .feature p { /* Feature card paragraph text */
+        font-size: 0.9rem;
+    }
+
+
+    /* Form Group - already handles stacking via flex-direction: column by default */
+    /* and min-width: 576px for row. This breakpoint is smaller than 576px, so stacking is active. */
+    /* We can ensure labels are fully on top if not already */
+    .form-group label {
+        min-width: auto; /* Reset min-width from wider screens */
+        text-align: left; /* Align label to the left */
+        margin-right: 0; /* Remove right margin */
+        margin-bottom: calc(var(--global-spacing-unit) * 0.3); /* Space between label and input */
+    }
+    .form-group input, .form-group textarea {
+        width: 100%; /* Ensure inputs take full width */
+    }
+
+
+    /* Profile Page */
+    .profile-settings .setting-item,
+    .team .card { /* If team card structure is similar or needs stacking */
+        flex-direction: column; /* Stack items in setting or team cards */
+        align-items: flex-start; /* Align items to the start */
+        gap: calc(var(--global-spacing-unit) * 0.5);
+    }
+    .profile-settings .setting-item .control-placeholder {
+        margin-top: calc(var(--global-spacing-unit) * 0.5);
+        text-align: left; /* Align placeholder text to left */
+        width: 100%; /* Allow placeholder to take full width if needed */
+    }
+    .profile-settings button[disabled] { /* Ensure button is full width or appropriately styled */
+        width: 100%;
+    }
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        font-size: 3rem;
+    }
+    .user-info h2 {
+        font-size: 1.3rem;
+    }
+
+    /* Dashboard Page */
+    .image-upload-area {
+        padding: var(--global-spacing-unit);
+    }
+    .image-upload-area .upload-icon {
+        font-size: 2.5rem;
+    }
+    .image-upload-area p {
+        font-size: 0.9rem; /* Smaller text in drop zone */
+    }
+    .image-upload-area .browse-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    #dashboard h1 { /* Dashboard title */
+        font-size: 1.8rem;
+    }
+
+    /* General Card Padding */
+    .glass-card, .card { /* Reduce padding for all cards on very small screens */
+        padding: var(--global-spacing-unit);
     }
 }
 
 /* Buttons */
 button, .cta-button {
     background-color: var(--secondary-color);
-    color: #fff;
-    padding: 10px 20px;
+    color: var(--primary-color-light); /* Text color for buttons, assuming light text on dark/accent bg */
+    padding: 12px 24px; /* Increased padding */
     border: none;
-    border-radius: 5px;
+    border-radius: 8px; /* Slightly more rounded */
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
-    box-shadow: 0 4px 20px rgba(0,123,255,0.15);
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: 600; /* Poppins regular is 400, medium 500, semibold 600 */
+    letter-spacing: 0.025em; /* Adjusted letter spacing */
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Softer shadow */
     position: relative;
     overflow: hidden;
 }
 
-button:hover, .cta-button:hover {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-}
-
+/* Removing the old ::after shine effect for now, can be redesigned if needed */
+/*
 .cta-button::after, button::after {
     content: '';
     position: absolute;
@@ -135,152 +351,220 @@ button:hover, .cta-button:hover {
 .cta-button:hover::after, button:hover::after {
     left: 120%;
 }
+*/
+
+button:hover, .cta-button:hover {
+    background-color: var(--hover-color); /* Use new hover variable */
+    color: var(--text-color-dark); /* Ensure text is readable on hover */
+    transform: translateY(-3px) scale(1.03); /* Enhanced lift and slight scale */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12); /* More noticeable shadow */
+}
+
+button:active, .cta-button:active {
+    transform: translateY(-1px) scale(0.98); /* Press down effect with slight shrink */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15); /* Adjusted shadow for active state */
+    background-color: var(--secondary-color); /* Ensure it doesn't stay in hover-color */
+}
+
 
 /* Cards */
 .card {
     background-color: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 20px 0;
-    transition: transform 0.3s;
+    border-radius: 12px; /* Slightly more rounded */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
+    padding: calc(var(--global-spacing-unit) * 1.5); /* Use spacing unit */
+    margin: calc(var(--global-spacing-unit) * 1.5) 0; /* Use spacing unit */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     color: var(--text-color);
 }
 
 .card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-8px); /* Slightly less lift */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
 }
 
 /* Advanced Glassmorphism Card */
 .glass-card {
     background: var(--glass-bg);
-    box-shadow: 0 8px 32px 0 rgba(0, 191, 255, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 var(--glass-border); /* Use variable for shadow color consistency */
+    backdrop-filter: blur(10px); /* Increased blur */
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px; /* Keep rounded */
     border: 1px solid var(--glass-border);
-    padding: 2rem;
-    margin: 2rem 0;
-    transition: transform 0.3s, box-shadow 0.3s;
+    padding: calc(var(--global-spacing-unit) * 2); /* Use spacing unit */
+    margin: calc(var(--global-spacing-unit) * 2) 0; /* Use spacing unit */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 16px 32px 0 rgba(31, 38, 135, 0.25);
+    transform: translateY(-8px) scale(1.01); /* Slightly less scale */
+    box-shadow: 0 12px 40px 0 var(--glass-border); /* Enhanced shadow on hover */
 }
 
 /* Forms */
 form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem; /* Increased gap */
 }
 
-form input, form textarea, form button {
-    padding: 0.8rem;
-    border: 1px solid var(--light-gray);
-    border-radius: 5px;
+form input, form textarea { /* Combined input and textarea */
+    padding: 0.9rem 1rem; /* Adjusted padding */
+    border: 1px solid var(--glass-border); /* Use glass border for consistency */
+    border-radius: 8px; /* Consistent border-radius */
     font-size: 1rem;
-    background: var(--light-gray);
+    background-color: var(--glass-bg); /* Use glass bg for inputs */
     color: var(--text-color);
+    font-family: var(--font-family); /* Ensure form elements use Poppins */
 }
 
-form button {
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    font-weight: bold;
+form input:focus, form textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color); /* Accent color border */
+    box-shadow: 0 0 0 3px rgba(var(--rgb-secondary-color-dark), 0.3); /* Use RGB if secondary is hex, e.g., for #20C997 -> 32, 201, 151 */
+    /* Assuming --secondary-color-dark is #20C997, its RGB is 32, 201, 151 */
+    /* If you have --secondary-color-dark-rgb: 32, 201, 151; then use: */
+    /* box-shadow: 0 0 0 3px rgba(var(--secondary-color-dark-rgb), 0.3); */
+    /* For now, I'll use a placeholder if direct RGB from hex is not possible in pure CSS vars for rgba() alpha */
+    /* Let's use a slightly desaturated version of secondary or a fixed color for simplicity if above is an issue */
+    box-shadow: 0 0 8px rgba(32, 201, 151, 0.3); /* Teal glow */
+}
+
+form button { /* Style form buttons like other buttons */
+    background-color: var(--secondary-color);
+    color: var(--primary-color-light);
+    font-weight: 600;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 form button:hover {
-    background-color: var(--dark-gray);
+    background-color: var(--hover-color);
+    color: var(--text-color-dark);
+    transform: translateY(-2px);
 }
 
 /* Align form-group label and input horizontally */
 .form-group {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column; /* Stack label and input on small screens */
+    align-items: flex-start; /* Align items to the start */
+    gap: calc(var(--global-spacing-unit) * 0.5); /* Use spacing unit */
 }
 
 .form-group label {
-    min-width: 100px;
-    text-align: right;
-    margin-right: 10px;
+    /* min-width: 100px; */ /* Remove fixed width */
+    text-align: left; /* Align text to left */
+    /* margin-right: 10px; */ /* Remove margin */
+    font-weight: 500;
 }
 
 .form-group input {
     flex: 1;
+    width: 100%; /* Make input take full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
+@media (min-width: 576px) { /* Apply horizontal layout for larger screens */
+    .form-group {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--global-spacing-unit); /* Use spacing unit */
+    }
+
+    .form-group label {
+        min-width: 120px; /* Adjust as needed */
+        text-align: right;
+        margin-right: 0; /* Remove as gap property is used */
+    }
+
+    .form-group input {
+        width: auto; /* Reset width to allow flex to work */
+    }
+}
+
 
 /* Hero Section */
 .hero-section {
     text-align: center;
-    padding: 50px 20px;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    color: var(--text-color);
+    padding: calc(var(--global-spacing-unit) * 3) calc(var(--global-spacing-unit) * 1.5); /* Use spacing unit */
+    /* background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); */ /* Keep or remove if glass is preferred */
+    /* color: var(--text-color); */ /* Already set by glass-card if used */
+    border-radius: 20px; /* Match glass-card if this is also a glass-card */
 }
 
 .hero-section h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+    /* font-size: 2.5rem; */ /* Handled by global h1 */
+    margin-bottom: 1rem; /* Adjusted margin */
     position: relative;
     z-index: 1;
     display: inline-block;
     padding-bottom: 0.3em;
 }
 
-.hero-section h1::after {
+.hero-section h1::after { /* Simpler underline, using accent color */
     content: '';
     display: block;
-    width: 60%;
+    width: 70%; /* Wider underline */
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    background: var(--secondary-color); /* Use secondary for pop */
     border-radius: 2px;
-    margin: 0.5em auto 0 auto;
+    margin: 0.4em auto 0 auto; /* Adjusted margin */
 }
 
 .hero-section p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+    font-size: 1.125rem; /* Slightly adjusted size */
+    margin-bottom: 2rem; /* Increased margin */
+    max-width: 600px; /* Constrain width for readability */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Features Section */
 .features {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
+    justify-content: center; /* Center features */
+    gap: calc(var(--global-spacing-unit) * 1.5); /* Use spacing unit */
     z-index: 1;
 }
 
-.feature {
-    flex: 1 1 calc(33% - 20px);
+.feature { /* Assuming .feature items are .glass-card or similar */
+    flex: 1 1 calc(33.333% - 3rem); /* Adjust basis for gap */
+    min-width: 280px; /* Minimum width for features */
     text-align: center;
-    padding: 20px;
-    background-color: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
-    transition: transform 0.3s, background 0.3s, color 0.3s;
-    color: var(--text-color);
-    border: 1px solid var(--glass-border);
+    /* padding: 20px; */ /* Handled by .glass-card */
+    /* background-color: var(--card-bg); */ /* Handled by .glass-card */
+    /* border-radius: 10px; */ /* Handled by .glass-card */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18); */ /* Handled by .glass-card */
+    /* transition: transform 0.3s, background 0.3s, color 0.3s; */ /* Handled by .glass-card */
+    /* color: var(--text-color); */ /* Handled by .glass-card */
+    /* border: 1px solid var(--glass-border); */ /* Handled by .glass-card */
 }
 
 .feature img {
     max-width: 100%;
     height: auto;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem; /* Adjusted margin */
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10); /* Slightly enhanced shadow */
 }
 
-.feature h3, .feature h2 {
-    color: var(--text-color) !important;
+.feature h2, .feature h3 { /* Ensure heading colors are correct within features */
+    color: var(--text-color) !important; /* Override if necessary, or ensure specificity */
+    margin-top: 0.5rem;
 }
 
 .feature p {
-    color: var(--text-color) !important;
+    color: var(--text-color) !important; /* Override if necessary */
+    font-size: 0.95rem; /* Slightly smaller text for feature cards */
 }
 
+/* Remove redundant styling if .feature elements are always .glass-card */
+/*
 .features .feature {
     background: var(--glass-bg) !important;
     color: var(--text-color) !important;
@@ -292,258 +576,316 @@ body.light-theme .features .feature {
     color: var(--text-color);
     border: 1px solid var(--glass-border);
 }
+*/
 
 /* Animated Gradient Background */
 body.animated-bg {
     position: relative;
-    background: var(--background-color) !important;
-    transition: background 0.3s;
+    background-color: var(--background-color) !important; /* Ensure it uses the new variable */
+    transition: background-color 0.3s;
 }
 
 .animated-bg .bg-blob {
     position: absolute;
     border-radius: 50%;
-    opacity: 0.25;
-    filter: blur(30px);
-    animation: blobMove 18s ease-in-out infinite alternate;
+    opacity: 0.35; /* Slightly more visible */
+    filter: blur(40px); /* More blur */
+    animation: blobMove 20s ease-in-out infinite alternate;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1; /* Ensure blobs are behind content */
 }
 
+/* Adjusted blob colors to match new palette */
 .bg-blob1 {
-    width: 320px; height: 320px;
-    background: linear-gradient(135deg, #00bfff 60%, #6a11cb 100%);
-    top: -80px; left: -80px;
+    width: 350px; height: 350px;
+    background: linear-gradient(135deg, var(--primary-color-dark) 0%, var(--secondary-color-dark) 100%);
+    top: -100px; left: -100px;
     animation-delay: 0s;
 }
 .bg-blob2 {
-    width: 220px; height: 220px;
-    background: linear-gradient(135deg, #ff6f61 60%, #4CAF50 100%);
-    bottom: -60px; right: -60px;
-    animation-delay: 6s;
+    width: 250px; height: 250px;
+    background: linear-gradient(135deg, var(--secondary-color-dark) 0%, var(--accent-color-dark) 100%);
+    bottom: -80px; right: -80px;
+    animation-delay: 7s;
 }
 .bg-blob3 {
-    width: 180px; height: 180px;
-    background: linear-gradient(135deg, #2575fc 60%, #00bfff 100%);
-    top: 40%; left: 70%;
-    animation-delay: 12s;
+    width: 200px; height: 200px;
+    background: linear-gradient(135deg, var(--accent-color-dark) 0%, var(--primary-color-dark) 100%);
+    top: 35%; left: 65%;
+    animation-delay: 14s;
 }
+
+/* Light theme blobs */
+:root.light-theme .bg-blob1 {
+    background: linear-gradient(135deg, var(--secondary-color-light) 0%, var(--accent-color-light) 100%);
+}
+:root.light-theme .bg-blob2 {
+    background: linear-gradient(135deg, var(--accent-color-light) 0%, #d0e0f0 100%); /* Adding a very light blue */
+}
+:root.light-theme .bg-blob3 {
+    background: linear-gradient(135deg, #d0e0f0 0%, var(--secondary-color-light) 100%);
+}
+
 
 @keyframes blobMove {
-    0%   { transform: scale(1) translate(0, 0); }
-    33%  { transform: scale(1.1, 0.9) translate(30px, -20px); }
-    66%  { transform: scale(0.9, 1.1) translate(-20px, 30px); }
-    100% { transform: scale(1) translate(0, 0); }
+    0%   { transform: scale(1) translate(0, 0) rotate(0deg); }
+    33%  { transform: scale(1.1, 0.9) translate(40px, -30px) rotate(120deg); }
+    66%  { transform: scale(0.9, 1.1) translate(-30px, 40px) rotate(240deg); }
+    100% { transform: scale(1) translate(0, 0) rotate(360deg); }
 }
 
-body.animated-bg.light-theme {
-    background: var(--background-color);
-}
+/* body.animated-bg.light-theme is handled by :root.light-theme .bg-blob rules */
 
 
-@keyframes gradientMove {
+@keyframes gradientMove { /* This seems unused, remove if not needed */
     0% {background-position: 0% 50%;}
     50% {background-position: 100% 50%;}
     100% {background-position: 0% 50%;}
 }
 
 /* Decorative SVG Shapes */
+/* Re-evaluate if these are still needed with new blob styles */
+/* If kept, ensure colors match new palette */
 .decorative-svg {
     position: absolute;
-    z-index: 0;
+    z-index: -1; /* Ensure they are behind content like blobs */
     pointer-events: none;
+    opacity: 0.5; /* Adjust opacity as needed */
 }
-
-.decorative-svg-home {
-    top: -40px;
-    left: -40px;
-    width: 200px;
-    height: 200px;
+/* Example: Update one SVG's fill. Repeat for others if kept. */
+.decorative-svg-home circle {
+    fill: var(--secondary-color); /* Use new color variable */
+    fill-opacity: 0.1; /* Adjust opacity */
 }
-.decorative-svg-about {
-    top: -60px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
+.decorative-svg-about circle { /* Assuming it's a circle too */
+    fill: var(--accent-color);
+    fill-opacity: 0.1;
 }
-.decorative-svg-contact {
-    top: 0;
-    right: 0;
-    width: 140px;
-    height: 140px;
+.decorative-svg-contact circle {
+    fill: var(--primary-color); /* Or a different accent */
+    fill-opacity: 0.08;
 }
-.decorative-svg-dashboard {
-    top: 0;
-    left: 0;
-    width: 180px;
-    height: 180px;
-}
-.decorative-svg-login {
-    bottom: 0;
-    right: 0;
-    width: 120px;
-    height: 120px;
-}
-.decorative-svg-services {
-    bottom: -40px;
-    left: -40px;
-    width: 160px;
-    height: 160px;
-}
+/* ... and so on for other SVGs ... */
 
 /* Team Section Cards */
 .team {
     display: flex;
-    gap: 2rem;
+    gap: calc(var(--global-spacing-unit) * 1.5); /* Use spacing unit */
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.team .card {
+.team .card { /* Assuming these are standard cards, not glass */
     background: var(--card-bg);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1); /* Adjusted shadow */
     border-radius: 16px;
     padding: 1.5rem;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     color: var(--text-color);
+    flex: 1 1 300px; /* Flex properties for responsiveness */
 }
 
 .team .card:hover {
-    transform: scale(1.04);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    transform: scale(1.03) translateY(-5px); /* Adjusted hover effect */
+    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
 }
 
-/* Responsive Glass Cards */
+/* Responsive Glass Cards - Adjustments */
 @media (max-width: 768px) {
-    .team {
+    .team { /* This rule for team stacking is fine as is */
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--global-spacing-unit);
     }
-    .glass-card {
-        padding: 1rem;
+    .glass-card { /* This rule for glass-card padding is also fine for 768px */
+        padding: calc(var(--global-spacing-unit) * 1.5);
+        margin: var(--global-spacing-unit) 0;
     }
+    /* The main header/footer flex-direction changes are moved into the new 768px block above for consolidation */
 }
 
-/* Animated Feature Cards */
-.feature.animate {
-    box-shadow: 0 8px 32px rgba(76,175,80,0.15);
-    background: linear-gradient(120deg, #e0f7fa 0%, #fff 100%);
-    border: 1px solid #b2ebf2;
+/* Animated Feature Cards - This seems like a specific state, ensure it uses new vars */
+.feature.animate { /* Make sure this uses the new color palette */
+    box-shadow: 0 8px 32px var(--secondary-color-dark); /* Example shadow with new color */
+    background: linear-gradient(120deg, var(--background-color-light) 0%, var(--primary-color-light) 100%); /* Example gradient */
+    border: 1px solid var(--secondary-color-dark);
 }
+:root.light-theme .feature.animate {
+    box-shadow: 0 8px 32px var(--secondary-color-light);
+    background: linear-gradient(120deg, var(--background-color-dark) 0%, var(--primary-color-dark) 100%);
+    border: 1px solid var(--secondary-color-light);
+}
+
 
 /* Advanced Header and Footer Styles */
 .main-header {
-    margin: 2rem auto 1.5rem auto;
-    padding: 0.5rem 2rem;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(76,175,80,0.10);
+    margin: calc(var(--global-spacing-unit) * 1.5) auto; /* Use spacing unit */
+    padding: var(--global-spacing-unit) calc(var(--global-spacing-unit) * 2); /* Use spacing unit */
+    border-radius: 16px; /* Slightly less rounded */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); /* Softer shadow */
     background: var(--glass-bg);
-    position: relative;
-    z-index: 2;
-    max-width: 1200px;
-    color: var(--text-color);
+    position: relative; /* Keep relative for z-index */
+    z-index: 10; /* Ensure header is above other content */
+    max-width: 1300px; /* Increased max-width */
+    color: var(--text-color); /* Should inherit from body or be set if different */
 }
 .header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: var(--global-spacing-unit); /* Use spacing unit */
 }
 .logo-icon {
-    font-size: 2rem;
+    font-size: 1.8rem; /* Slightly smaller logo icon */
     margin-right: 0.5rem;
     vertical-align: middle;
+    color: var(--secondary-color); /* Color the icon */
 }
 .main-nav {
     display: flex;
-    gap: 1.5rem;
-    background: rgba(0,123,255,0.07);
-    padding: 0.5rem 1.5rem;
+    gap: var(--global-spacing-unit); /* Use spacing unit */
+    background: transparent; /* Remove specific background, rely on header's glass */
+    padding: 0; /* Remove padding, spacing handled by gap */
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,123,255,0.07);
+    box-shadow: none; /* Remove shadow, rely on header's shadow */
 }
 .main-nav a {
-    color: var(--secondary-color);
-    font-weight: 600;
+    color: var(--text-color); /* Use main text color, secondary for active/hover */
+    font-weight: 500; /* Poppins medium */
     text-decoration: none;
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    transition: background 0.2s, color 0.2s;
+    padding: 0.5rem 1rem; /* Adjusted padding */
+    border-radius: 8px; /* Consistent border-radius */
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
+.main-nav a {
+    position: relative; /* For underline pseudo-element */
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px; /* Position the underline below the link */
+    left: 50%;
+    background-color: var(--secondary-color);
+    transition: width 0.3s ease-out, left 0.3s ease-out;
+}
+
+.main-nav a:hover::after, .main-nav a.active::after {
+    width: 100%;
+    left: 0;
+}
+
 .main-nav a:hover, .main-nav a.active {
-    background: linear-gradient(90deg, #4CAF50 30%, #007BFF 100%);
-    color: #fff;
+    color: var(--secondary-color); /* Emphasize text color on hover/active */
+    background-color: transparent; /* Remove background color change if underline is preferred */
+}
+
+/* Ensure .active class also gets the text color emphasis if not hovering */
+.main-nav a.active {
+    color: var(--secondary-color);
 }
 
 .main-footer {
-    margin: 2rem auto 0 auto;
-    padding: 1rem 2rem;
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 -2px 24px rgba(76,175,80,0.10);
+    margin: calc(var(--global-spacing-unit) * 1.5) auto 0 auto; /* Use spacing unit */
+    padding: calc(var(--global-spacing-unit) * 1.5) calc(var(--global-spacing-unit) * 2); /* Use spacing unit */
+    border-radius: 16px 16px 0 0; /* Match header */
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08); /* Softer shadow */
     background: var(--glass-bg);
-    max-width: 1200px;
+    max-width: 1300px; /* Increased max-width */
     position: relative;
-    z-index: 2;
-    color: var(--text-color);
+    z-index: 10; /* Ensure footer is above other content */
+    color: var(--text-color); /* Should inherit */
 }
 .footer-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: var(--global-spacing-unit); /* Use spacing unit */
 }
 .footer-logo {
-    font-size: 1.5rem;
+    font-size: 1.3rem; /* Slightly smaller footer logo */
     margin-right: 0.5rem;
+    color: var(--secondary-color); /* Color the icon */
 }
 .footer-nav {
     display: flex;
-    gap: 1rem;
+    gap: calc(var(--global-spacing-unit) * 0.75); /* Use spacing unit */
 }
 .footer-nav a {
-    color: var(--primary-color);
+    color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
-    padding: 0.2rem 0.7rem;
-    border-radius: 5px;
-    transition: background 0.2s, color 0.2s;
+    padding: 0.4rem 0.8rem; /* Adjusted padding */
+    border-radius: 8px;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
-.footer-nav a:hover {
-    background: linear-gradient(90deg, #007BFF 30%, #4CAF50 100%);
-    color: #fff;
+.footer-nav a {
+    position: relative;
 }
-@media (max-width: 768px) {
-    .header-content, .footer-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    .main-nav, .footer-nav {
-        width: 100%;
-        justify-content: flex-start;
-        gap: 0.7rem;
-        padding: 0.5rem 0.5rem;
-    }
+
+.footer-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    background-color: var(--secondary-color);
+    transition: width 0.3s ease-out, left 0.3s ease-out;
 }
+
+.footer-nav a:hover::after, .footer-nav a.active::after {
+    width: 100%;
+    left: 0;
+}
+
+.footer-nav a:hover, .footer-nav a.active {
+    color: var(--secondary-color);
+    background-color: transparent;
+}
+
+.footer-nav a.active {
+    color: var(--secondary-color);
+}
+
+/* Remove this specific media query block as its contents have been merged into the more comprehensive ones above or are already covered */
+/* @media (max-width: 768px) { */
+    /* .main-header, .main-footer { */
+        /* margin-left: var(--global-spacing-unit); */
+        /* margin-right: var(--global-spacing-unit); */
+        /* padding-left: var(--global-spacing-unit); */
+        /* padding-right: var(--global-spacing-unit); */
+    /* } */
+    /* .header-content { ... } */ /* Merged into the new 768px block */
+    /* .footer-content { ... } */ /* Merged into the new 768px block */
+    /* .main-nav, .footer-nav { ... } */ /* Merged into the new 768px block */
+    /* .main-nav a, .footer-nav a { ... } */ /* Merged into the new 768px block */
+/* } */
 
 /* Theme Switch */
 .theme-switch {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 1.5rem; /* Adjusted position */
+    right: 1.5rem;
     z-index: 1000;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
+    border-radius: 50px; /* Make it a pill shape */
+    padding: 0.6rem 1.2rem; /* Adjusted padding */
     cursor: pointer;
     color: var(--text-color);
-    font-weight: bold;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: background 0.3s, color 0.3s;
+    font-weight: 500; /* Medium weight */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer shadow */
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
 }
+.theme-switch:hover {
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
 
 /* Toast Notification */
 #toast-notification {
@@ -551,4 +893,185 @@ body.animated-bg.light-theme {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s;
+}
+
+/* Scroll-based Animations */
+.section-fade-in-up {
+    opacity: 0;
+    transform: translateY(30px); /* Increased from 20px for more noticeable effect */
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.section-fade-in-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* CSS Loader for Dashboard */
+.loader {
+    border: 5px solid var(--card-bg-light); /* Lighter border for the track */
+    border-top: 5px solid var(--secondary-color); /* Accent color for the spinner */
+    border-radius: 50%;
+    width: 50px;  /* Increased size */
+    height: 50px; /* Increased size */
+    animation: spin 1.2s linear infinite; /* Slightly slower spin */
+    margin: 25px auto; /* Adjusted margin */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Dashboard Image Upload Area Styles */
+.image-upload-area {
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+    padding: calc(var(--global-spacing-unit) * 2);
+    text-align: center;
+    background-color: rgba(var(--primary-color-dark), 0.05); /* Subtle background tint */
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    margin-bottom: calc(var(--global-spacing-unit) * 1.5);
+}
+
+:root.light-theme .image-upload-area {
+    background-color: rgba(var(--primary-color-light), 0.5); /* Adjust for light theme if needed */
+    border-color: var(--accent-color-light);
+}
+
+.image-upload-area:hover, .image-upload-area.drag-over {
+    border-color: var(--secondary-color);
+    background-color: rgba(var(--secondary-color-dark), 0.1);
+}
+
+:root.light-theme .image-upload-area:hover, :root.light-theme .image-upload-area.drag-over {
+    border-color: var(--secondary-color-light);
+    background-color: rgba(var(--secondary-color-light), 0.08);
+}
+
+.image-upload-area .upload-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--global-spacing-unit);
+    color: var(--secondary-color);
+}
+
+.image-upload-area p {
+    margin-bottom: var(--global-spacing-unit);
+    color: var(--text-color-muted);
+}
+
+.image-upload-area .browse-button {
+    display: inline-block; /* To allow margin auto if needed, or just for consistency */
+    padding: 0.6rem 1.2rem; /* Slightly smaller than main CTA */
+    font-size: 0.9rem;
+}
+
+.upload-error {
+    color: #ff6f61; /* Error red */
+    font-weight: 500;
+    margin-top: var(--global-spacing-unit);
+    font-size: 0.9rem;
+}
+
+/* Profile Page Specific Styles */
+/* Ensure this is not duplicated if already present */
+.profile-container {
+    padding: calc(var(--global-spacing-unit) * 2);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: calc(var(--global-spacing-unit) * 2);
+}
+
+.avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    background-color: var(--accent-color); /* Using accent color for a bit more pop */
+    border-radius: 50%;
+    margin: 0 auto calc(var(--global-spacing-unit) * 1.5) auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem; /* Larger for a placeholder icon */
+    color: var(--primary-color); /* Text color that contrasts with accent */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.user-info h2 {
+    margin-bottom: calc(var(--global-spacing-unit) * 0.5);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.user-info p {
+    margin-bottom: calc(var(--global-spacing-unit) * 0.25);
+    color: var(--text-color-muted);
+    font-size: 0.95rem;
+}
+
+.profile-settings, .activity-log {
+    margin-top: calc(var(--global-spacing-unit) * 2.5);
+    padding-top: calc(var(--global-spacing-unit) * 1.5);
+    border-top: 1px solid var(--glass-border);
+}
+
+.profile-settings h3, .activity-log h3 {
+    margin-bottom: calc(var(--global-spacing-unit) * 1.5);
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--global-spacing-unit) 0;
+    border-bottom: 1px solid var(--glass-border);
+    gap: var(--global-spacing-unit);
+}
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item label {
+    font-weight: 500;
+    color: var(--text-color);
+    flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+.setting-item .control-placeholder {
+    color: var(--text-color-muted);
+    font-style: italic;
+    text-align: right;
+}
+
+/* Disabled button style for profile page */
+.profile-settings button[disabled] {
+    background-color: var(--accent-color-dark); /* A less prominent color */
+    color: var(--text-color-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+:root.light-theme .profile-settings button[disabled] {
+    background-color: var(--hover-color-light);
+}
+
+
+.activity-log ul {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-log li {
+    padding: calc(var(--global-spacing-unit) * 0.75) 0;
+    border-bottom: 1px dashed var(--glass-border); /* Dashed for variety */
+    color: var(--text-color-muted);
+    font-size: 0.9rem;
+}
+.activity-log li:last-child {
+    border-bottom: none;
 }

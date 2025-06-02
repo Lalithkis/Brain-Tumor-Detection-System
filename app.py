@@ -6,6 +6,7 @@ import io
 import os
 import cv2 # For OpenCV operations
 import tensorflow as tf # For loading and using the Keras model
+import random # Add this import
 
 app = Flask(__name__)
 CORS(app)
@@ -41,10 +42,49 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
-    if email in users and users[email]['password'] == password:
-        return jsonify({'message': 'Login successful'}), 200
+    user = users.get(email) # Get user data
+
+    if user and user['password'] == password: # Check if user exists and password matches
+        # Generate a dummy session token
+        session_token = f"dummy_token_for_{email.split('@')[0]}_{random.randint(10000, 99999)}"
+        user_name = user.get('name', 'User') # Get user's name, default to 'User'
+        return jsonify({
+            'message': 'Login successful',
+            'session_token': session_token,
+            'user_name': user_name
+        }), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Request body must be JSON"}), 400
+
+    email = data.get('email')
+    password = data.get('password')
+    name = data.get('name')
+
+    if not email or not password or not name:
+        return jsonify({"message": "Missing email, password, or name"}), 400
+
+    # Basic type validation
+    if not isinstance(email, str) or not isinstance(password, str) or not isinstance(name, str):
+        return jsonify({"message": "Email, password, and name must be strings"}), 400
+
+    if len(password) < 6: # Basic password length check
+        return jsonify({"message": "Password must be at least 6 characters long"}), 400
+
+    if email in users:
+        return jsonify({"message": "Email already registered"}), 409 # Conflict
+
+    # In a real app, hash the password before storing:
+    # from werkzeug.security import generate_password_hash
+    # users[email] = {"password": generate_password_hash(password), "name": name}
+    users[email] = {"password": password, "name": name}
+
+    return jsonify({"message": "User registered successfully"}), 201
 
 @app.route('/analyze', methods=['POST'])
 def analyze_image_endpoint(): # Renamed to avoid conflict with PIL.Image
