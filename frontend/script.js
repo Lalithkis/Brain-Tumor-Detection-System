@@ -153,49 +153,154 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Generic Scroll-triggered Animation (IntersectionObserver for .scroll-animate)
+    const scrollAnimatedElements = document.querySelectorAll('.scroll-animate');
+    if (scrollAnimatedElements.length > 0) {
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible'); // Triggers .section-fade-in-up
+                        observer.unobserve(entry.target); // Stop observing once animated
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
+
+            scrollAnimatedElements.forEach(element => observer.observe(element));
+        } else {
+            // Fallback for browsers that don't support IntersectionObserver
+            scrollAnimatedElements.forEach(element => element.classList.add('is-visible'));
+        }
+    }
+
     // Dashboard page logic
     if (window.location.pathname.endsWith('dashboard.html')) {
-        const imageUpload = $('imageUpload');
+        const imageUploadInput = $('imageUpload'); // Actual file input, visually hidden
+        const imageDropZone = $('image-drop-zone');
         const previewImage = $('previewImage');
         const loadingMessage = $('loadingMessage');
         const detectionResult = $('detectionResult');
-        const historyList = $('historyList'); // Ensure historyList is defined if used
+        const historyList = $('historyList');
+        const uploadErrorMessage = $('upload-error-message');
 
-        // Check if all essential dashboard elements exist
-        if (imageUpload && previewImage && loadingMessage && detectionResult) {
-            imageUpload.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    // Basic file type validation (optional, but good practice)
-                    if (!file.type.startsWith('image/')) {
-                        showToast('Please upload a valid image file (e.g., JPG, PNG).', 'error');
-                        imageUpload.value = ''; // Reset file input
-                        return;
-                    }
+        function clearUploadState() {
+            if (previewImage) {
+                previewImage.style.display = 'none';
+                previewImage.src = '#';
+            }
+            if (uploadErrorMessage) {
+                uploadErrorMessage.textContent = '';
+                uploadErrorMessage.style.display = 'none';
+            }
+            if (detectionResult) {
+                detectionResult.style.display = 'none';
+                detectionResult.textContent = '';
+            }
+            if (imageUploadInput) {
+                imageUploadInput.value = ''; // Reset file input value
+            }
+        }
 
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImage.src = e.target.result;
-                        previewImage.style.display = 'block';
-                        detectionResult.style.display = 'none'; // Hide previous result
-                        loadingMessage.style.display = 'block';
-                        processImage(file);
-                    };
-                    reader.onerror = function() {
-                        console.error("FileReader error.");
-                        showToast("Error reading file. Please try again.", 'error');
-                        loadingMessage.style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
+        function handleFile(file) {
+            clearUploadState();
+
+            if (!file) {
+                // This case might occur if a user deselects a file from input, or drag action had no files.
+                // console.log("No file provided or selection cancelled.");
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                const errorMsg = 'Invalid file type. Please upload an image (e.g., JPG, PNG).';
+                if (uploadErrorMessage) {
+                    uploadErrorMessage.textContent = errorMsg;
+                    uploadErrorMessage.style.display = 'block';
                 } else {
-                    // No file selected, clear preview and messages
-                    previewImage.style.display = 'none';
-                    previewImage.src = '#';
-                    loadingMessage.style.display = 'none';
-                    detectionResult.style.display = 'none';
+                    showToast(errorMsg, 'error');
                 }
+                return;
+            }
+
+            if (previewImage) { // Ensure previewImage element exists
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    if (detectionResult) detectionResult.style.display = 'none'; // Hide previous result
+
+                    if (loadingMessage) {
+                        loadingMessage.innerHTML = '<div class="loader"></div><p>Analyzing, please wait...</p>';
+                        loadingMessage.style.display = 'block';
+                    }
+                    processImage(file); // Call existing analysis function
+                };
+                reader.onerror = function() {
+                    console.error("FileReader error.");
+                    const errorMsg = "Error reading file. Please try again.";
+                    if (uploadErrorMessage) {
+                        uploadErrorMessage.textContent = errorMsg;
+                        uploadErrorMessage.style.display = 'block';
+                    } else {
+                        showToast(errorMsg, 'error');
+                    }
+                    if (loadingMessage) loadingMessage.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Fallback if previewImage is not available, directly process
+                if (loadingMessage) {
+                    loadingMessage.innerHTML = '<div class="loader"></div><p>Analyzing, please wait...</p>';
+                    loadingMessage.style.display = 'block';
+                }
+                processImage(file);
+            }
+        }
+
+        if (imageDropZone) {
+            // Clicking the drop zone should trigger the hidden file input
+            imageDropZone.addEventListener('click', (e) => {
+                // Prevent triggering if the click is on the browse button itself or its children
+                if (e.target.closest('.browse-button') || e.target.id === 'imageUpload') {
+                    return;
+                }
+                imageUploadInput.click();
             });
 
+            imageDropZone.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                imageDropZone.classList.add('drag-over');
+            });
+
+            imageDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Necessary for drop to work
+                imageDropZone.classList.add('drag-over'); // Keep class while dragging over
+            });
+
+            imageDropZone.addEventListener('dragleave', (e) => {
+                imageDropZone.classList.remove('drag-over');
+            });
+
+            imageDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageDropZone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+            });
+        }
+
+        if (imageUploadInput) {
+            imageUploadInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                handleFile(file); // The handleFile function now includes validation and preview logic
+            });
+        }
+
+        // Check if all essential dashboard elements exist for processImage
+        if (loadingMessage && detectionResult) {
+            // processImage function remains largely the same, but relies on handleFile for UI setup
             function processImage(file) {
                 const formData = new FormData();
                 formData.append('image', file);
@@ -218,7 +323,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
-                    loadingMessage.style.display = 'none';
+                    if (loadingMessage) {
+                        loadingMessage.style.display = 'none';
+                        loadingMessage.innerHTML = ''; // Clear spinner and text
+                    }
                     // Corrected: Use data.message (or data.prediction_label) from backend response
                     detectionResult.textContent = data.message || 'Analysis complete. No specific message.';
                     detectionResult.style.display = 'block';
@@ -233,7 +341,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => {
                     console.error('Analysis Error:', error);
-                    loadingMessage.style.display = 'none';
+                    if (loadingMessage) {
+                        loadingMessage.style.display = 'none';
+                        loadingMessage.innerHTML = ''; // Clear spinner and text
+                    }
                     detectionResult.textContent = 'Error during analysis: ' + error.message;
                     detectionResult.style.display = 'block';
                     showToast('Error during analysis: ' + error.message, 'error');

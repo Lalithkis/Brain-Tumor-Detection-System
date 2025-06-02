@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
     <title>Brain Tumor Detection Dashboard</title>
@@ -25,6 +25,7 @@
                 <a href="about.html">About</a>
                 <a href="services.html">Services</a>
                 <a href="contact.html">Contact</a>
+                <a href="profile.html">Profile</a>
                 <a href="login.html">Login</a>
             </nav>
         </div>
@@ -32,13 +33,21 @@
     <main>
         <div class="container glass-card" id="dashboard">
             <h1>Brain Tumor Detection</h1>
-            <div class="upload-area">
-                <label for="imageUpload" class="cta-button" tabindex="0">Choose Image</label>
-                <input type="file" id="imageUpload" accept="image/*" aria-label="Upload brain scan image">
+
+            <div id="image-drop-zone" class="image-upload-area">
+                <input type="file" id="imageUpload" accept="image/*" aria-label="Upload brain scan image" style="display: none;">
+                <label for="imageUpload" class="image-upload-label">
+                    <span class="upload-icon">🖼️</span>
+                    <p>Drag & drop an image here, or click to select file</p>
+                    <span class="cta-button browse-button">Browse Files</span>
+                </label>
+                <div id="upload-error-message" class="upload-error" style="display: none;"></div>
             </div>
-            <div class="preview-area">
-                <img id="previewImage" src="#" alt="Preview Image" style="display:none;">
+
+            <div class="preview-area" style="margin-top: var(--global-spacing-unit);">
+                <img id="previewImage" src="#" alt="Preview Image" style="display:none; max-width: 100%; height: auto; margin-top: var(--global-spacing-unit); border-radius: 8px;">
             </div>
+
             <div class="results-area">
                 <h2>Results</h2>
                 <div id="results">
