@@ -708,19 +708,6 @@ body.animated-bg {
     /* The main header/footer flex-direction changes are moved into the new 768px block above for consolidation */
 }
 
-/* Animated Feature Cards - This seems like a specific state, ensure it uses new vars */
-.feature.animate { /* Make sure this uses the new color palette */
-    box-shadow: 0 8px 32px var(--secondary-color-dark); /* Example shadow with new color */
-    background: linear-gradient(120deg, var(--background-color-light) 0%, var(--primary-color-light) 100%); /* Example gradient */
-    border: 1px solid var(--secondary-color-dark);
-}
-:root.light-theme .feature.animate {
-    box-shadow: 0 8px 32px var(--secondary-color-light);
-    background: linear-gradient(120deg, var(--background-color-dark) 0%, var(--primary-color-dark) 100%);
-    border: 1px solid var(--secondary-color-light);
-}
-
-
 /* Advanced Header and Footer Styles */
 .main-header {
     margin: calc(var(--global-spacing-unit) * 1.5) auto; /* Use spacing unit */
