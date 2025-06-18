@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from PIL import Image
 import numpy as np
@@ -7,6 +7,12 @@ import os
 import cv2 # For OpenCV operations
 import tensorflow as tf # For loading and using the Keras model
 import random # Add this import
+import base64
+from fpdf import FPDF
+import tempfile
+import smtplib
+from email.message import EmailMessage
+import ssl
 
 app = Flask(__name__)
 CORS(app)
@@ -24,6 +30,20 @@ try:
 except Exception as e:
     print(f"Error loading Keras model: {e}")
     # loaded_model will remain None, and we can check for this in the analyze route
+
+# --- Segmentation Model Loading ---
+SEG_MODEL_PATH = 'unet-e012d006.pt'
+segmentation_model = None
+
+try:
+    import torch
+    segmentation_model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+        in_channels=3, out_channels=1, init_features=32, pretrained=True)
+    segmentation_model.eval()
+    print("Segmentation model loaded from torch.hub successfully.")
+except Exception as e:
+    print(f"Error loading segmentation model: {e}")
+    # segmentation_model will remain None
 
 # Dummy user database (replace with a real database in production)
 users = {
@@ -101,6 +121,7 @@ def analyze_image_endpoint(): # Renamed to avoid conflict with PIL.Image
             return jsonify({"error": "No image uploaded"}), 400
 
         image_file = request.files['image']
+        city = request.form.get('city', '').strip().lower()  # Accept city from form-data
 
         # Open the image using Pillow
         pil_image = Image.open(io.BytesIO(image_file.read()))
@@ -111,11 +132,97 @@ def analyze_image_endpoint(): # Renamed to avoid conflict with PIL.Image
         # Run prediction
         prediction_result = run_model_prediction(preprocessed_image_array)
 
+        # Highlight tumor area if tumor detected
+        # (Highlighting feature removed as per request)
+        prediction_result['highlighted_image_base64'] = None
+
+        # Add doctor recommendations
+        prediction_result['doctor_recommendations'] = get_doctor_recommendations(city)
+
         return jsonify(prediction_result), 200 # prediction_result is already a dict
 
     except Exception as e:
         print(f"Error during analysis: {e}")
         return jsonify({"error": f"An error occurred during analysis: {str(e)}"}), 500
+
+@app.route('/generate_report', methods=['POST'])
+def generate_report():
+    """
+    Generate a PDF report for the analysis and return it for download.
+    Expects JSON with keys: prediction_label, confidence_score, datetime, highlighted_image_base64, original_image_base64
+    """
+    data = request.get_json()
+    prediction_label = data.get('prediction_label', 'N/A')
+    confidence_score = data.get('confidence_score', 'N/A')
+    scan_datetime = data.get('datetime', 'N/A')
+    highlighted_image_base64 = data.get('highlighted_image_base64')
+    original_image_base64 = data.get('original_image_base64')
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(0, 10, 'Brain Tumor Detection Report', ln=True, align='C')
+    pdf.ln(10)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, f'Date & Time: {scan_datetime}', ln=True)
+    pdf.cell(0, 10, f'Prediction: {prediction_label}', ln=True)
+    pdf.cell(0, 10, f'Confidence Score: {confidence_score}%', ln=True)
+    pdf.ln(5)
+    if original_image_base64:
+        img_path = tempfile.mktemp(suffix='.jpg')
+        with open(img_path, 'wb') as f:
+            f.write(base64.b64decode(original_image_base64))
+        pdf.cell(0, 10, 'Uploaded Image:', ln=True)
+        pdf.image(img_path, w=80)
+        pdf.ln(5)
+    if highlighted_image_base64:
+        img_path2 = tempfile.mktemp(suffix='.jpg')
+        with open(img_path2, 'wb') as f:
+            f.write(base64.b64decode(highlighted_image_base64))
+        pdf.cell(0, 10, 'Tumor Highlighted Image:', ln=True)
+        pdf.image(img_path2, w=80)
+        pdf.ln(5)
+    pdf_path = tempfile.mktemp(suffix='.pdf')
+    pdf.output(pdf_path)
+    return send_file(pdf_path, as_attachment=True, download_name='BrainTumorReport.pdf')
+
+@app.route('/email_report', methods=['POST'])
+def email_report():
+    """
+    Email the PDF report to a doctor/hospital.
+    Expects JSON with keys: to_email, subject, body, report_pdf_base64
+    """
+    data = request.get_json()
+    to_email = data.get('to_email')
+    subject = data.get('subject', 'Brain Tumor Detection Report')
+    body = data.get('body', '')
+    report_pdf_base64 = data.get('report_pdf_base64')
+    if not (to_email and report_pdf_base64):
+        return jsonify({'error': 'Missing recipient email or report PDF'}), 400
+    # Save PDF to temp file
+    pdf_path = tempfile.mktemp(suffix='.pdf')
+    with open(pdf_path, 'wb') as f:
+        f.write(base64.b64decode(report_pdf_base64))
+    # Email config (replace with your SMTP server details)
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 465
+    smtp_user = 'your_email@gmail.com'  # Replace with your email
+    smtp_pass = 'your_app_password'     # Replace with your app password
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = smtp_user
+    msg['To'] = to_email
+    msg.set_content(body)
+    with open(pdf_path, 'rb') as f:
+        msg.add_attachment(f.read(), maintype='application', subtype='pdf', filename='BrainTumorReport.pdf')
+    context = ssl.create_default_context()
+    try:
+        with smtplib.SMTP_SSL(smtp_server, smtp_port, context=context) as server:
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+        return jsonify({'message': 'Report emailed successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to send email: {str(e)}'}), 500
 
 def preprocess_for_model(pil_img):
     """
@@ -158,13 +265,14 @@ def run_model_prediction(image_array):
     Args:
         image_array (numpy.ndarray): The preprocessed image array.
     Returns:
-        dict: A dictionary containing the prediction label and class.
+        dict: A dictionary containing the prediction label, class, and confidence score.
     """
     if loaded_model is None: # Should be checked before calling, but as a safeguard
         raise RuntimeError("Model is not loaded.")
 
     prediction_probabilities = loaded_model.predict(image_array)
     predicted_class_index = np.argmax(prediction_probabilities, axis=1)[0]
+    confidence_score = float(np.max(prediction_probabilities))  # Get the highest probability
 
     prediction_label = ""
     has_tumor = False # Default, will be overridden if a tumor is detected
@@ -182,12 +290,46 @@ def run_model_prediction(image_array):
         prediction_label = 'Pituitary Tumor'
         has_tumor = True
 
+    confidence_percent = round(confidence_score * 100, 2)
+    message = f"The model predicts: {prediction_label} with {confidence_percent}% confidence"
+
     return {
         "predicted_class_index": int(predicted_class_index), # Send as int
         "prediction_label": prediction_label,
         "has_tumor": has_tumor,
-        "message": f"The model predicts: {prediction_label}" # A more direct message
+        "confidence_score": confidence_percent,
+        "message": message
     }
+
+def highlight_tumor_area(image_bgr, tumor_class_index):
+    """
+    (Highlighting feature removed. This function is now a no-op.)
+    """
+    return image_bgr
+
+def get_doctor_recommendations(city):
+    """
+    Returns a list of specialist doctors for the given city.
+    Args:
+        city (str): City name (lowercase)
+    Returns:
+        list: List of doctor dicts
+    """
+    doctors_by_city = {
+        'salem': [
+            {'name': 'Dr. S. Kumar', 'specialty': 'Neurosurgeon', 'hospital': 'Salem Neuro Center', 'contact': '+91-9876543210'},
+            {'name': 'Dr. Priya R.', 'specialty': 'Oncologist', 'hospital': 'Salem Oncology Clinic', 'contact': '+91-9123456780'},
+        ],
+        'chennai': [
+            {'name': 'Dr. A. Srinivasan', 'specialty': 'Neurosurgeon', 'hospital': 'Apollo Hospitals', 'contact': '+91-9000000001'},
+            {'name': 'Dr. Meena S.', 'specialty': 'Oncologist', 'hospital': 'MIOT International', 'contact': '+91-9000000002'},
+        ],
+        'coimbatore': [
+            {'name': 'Dr. R. Balaji', 'specialty': 'Neurosurgeon', 'hospital': 'CBE Brain & Spine', 'contact': '+91-9000000003'},
+            {'name': 'Dr. Latha V.', 'specialty': 'Oncologist', 'hospital': 'Ganga Hospital', 'contact': '+91-9000000004'},
+        ],
+    }
+    return doctors_by_city.get(city, [])
 
 if __name__ == '__main__':
     # Make sure 'effnet.h5' is in the same directory as this script,

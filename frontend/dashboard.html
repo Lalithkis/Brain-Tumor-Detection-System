@@ -53,7 +53,12 @@
                 <div id="results">
                     <p id="loadingMessage" style="display: none;">Analyzing image...</p>
                     <p id="detectionResult" style="display: none;"></p>
+                    <img id="highlightedResultImage" src="#" alt="Tumor Highlighted Result" style="display:none; max-width:100%; margin-top:1em; border-radius:8px; border:2px solid #4CAF50;">
+                    <div id="doctorRecommendations" style="display:none; margin-top:1em;"></div>
                 </div>
+            </div>
+            <div class="report-actions" style="margin-top:1.5em; display:none;" id="reportActions">
+                <button class="cta-button" id="downloadReportBtn">Download Report (PDF)</button>
             </div>
             <div class="history">
                 <h2>Analysis History</h2>

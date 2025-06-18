@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specialist Doctor Recommendations by City</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body class="animated-bg">
+    <div class="bg-blob bg-blob1"></div>
+    <div class="bg-blob bg-blob2"></div>
+    <div class="bg-blob bg-blob3"></div>
+    <button class="theme-switch" onclick="toggleTheme()" aria-label="Toggle dark/light mode">🌙/☀️</button>
+    <header class="main-header glass-card">
+        <div class="header-content">
+            <h1><span class="logo-icon" aria-label="logo">🧠</span> Specialist Doctor Recommendations</h1>
+            <nav class="main-nav" aria-label="Main navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="contact.html">Contact</a>
+                <a href="doctors.html">Doctors</a>
+                <a href="profile.html">Profile</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="container glass-card" style="margin-top:2em;">
+            <h2>Find Top Neurosurgeons & Oncologists by City</h2>
+            <div class="doctor-cities">
+                <button class="cta-button" onclick="showDoctors('salem')">Salem</button>
+                <button class="cta-button" onclick="showDoctors('chennai')">Chennai</button>
+                <button class="cta-button" onclick="showDoctors('coimbatore')">Coimbatore (CBE)</button>
+            </div>
+            <div id="doctorList" style="margin-top:2em;"></div>
+        </section>
+    </main>
+    <footer class="main-footer glass-card">
+        <div class="footer-content">
+            <span class="footer-logo" aria-label="logo">🧠</span>
+            <span>&copy; 2025 Brain Tumor Detection System. All rights reserved.</span>
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="contact.html">Contact</a>
+                <a href="doctors.html">Doctors</a>
+                <a href="profile.html">Profile</a>
+            </nav>
+        </div>
+    </footer>
+    <script>
+        const doctorsData = {
+            'salem': [
+                {name: 'Dr. S. Kumar', specialty: 'Neurosurgeon', hospital: 'Salem Neuro Center', contact: '+91-9876543210'},
+                {name: 'Dr. Priya R.', specialty: 'Oncologist', hospital: 'Salem Oncology Clinic', contact: '+91-9123456780'},
+            ],
+            'chennai': [
+                {name: 'Dr. A. Srinivasan', specialty: 'Neurosurgeon', hospital: 'Apollo Hospitals', contact: '+91-9000000001'},
+                {name: 'Dr. Meena S.', specialty: 'Oncologist', hospital: 'MIOT International', contact: '+91-9000000002'},
+            ],
+            'coimbatore': [
+                {name: 'Dr. R. Balaji', specialty: 'Neurosurgeon', hospital: 'CBE Brain & Spine', contact: '+91-9000000003'},
+                {name: 'Dr. Latha V.', specialty: 'Oncologist', hospital: 'Ganga Hospital', contact: '+91-9000000004'},
+            ]
+        };
+        function showDoctors(city) {
+            const listDiv = document.getElementById('doctorList');
+            const docs = doctorsData[city] || [];
+            if (docs.length === 0) {
+                listDiv.innerHTML = '<p>No doctors found for this city.</p>';
+                return;
+            }
+            let html = `<h3>Specialists in ${city.charAt(0).toUpperCase() + city.slice(1)}</h3><ul class="doctor-list">`;
+            docs.forEach(doc => {
+                html += `<li class="glass-card" style="margin-bottom:1em; padding:1em;">
+                    <strong>${doc.name}</strong> (${doc.specialty})<br>
+                    <span>Hospital: ${doc.hospital}</span><br>
+                    <span>Contact: ${doc.contact}</span>
+                </li>`;
+            });
+            html += '</ul>';
+            listDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

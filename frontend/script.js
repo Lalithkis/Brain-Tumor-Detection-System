@@ -325,18 +325,87 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (loadingMessage) {
                         loadingMessage.style.display = 'none';
-                        loadingMessage.innerHTML = ''; // Clear spinner and text
+                        loadingMessage.innerHTML = '';
                     }
-                    // Corrected: Use data.message (or data.prediction_label) from backend response
                     detectionResult.textContent = data.message || 'Analysis complete. No specific message.';
                     detectionResult.style.display = 'block';
 
+                    // Show highlighted tumor image if present
+                    const highlightedImg = document.getElementById('highlightedResultImage');
+                    if (highlightedImg) {
+                        if (data.highlighted_image_base64) {
+                            highlightedImg.src = 'data:image/jpeg;base64,' + data.highlighted_image_base64;
+                            highlightedImg.style.display = 'block';
+                        } else {
+                            highlightedImg.style.display = 'none';
+                        }
+                    }
+
+                    // Show doctor recommendations if present
+                    const docDiv = document.getElementById('doctorRecommendations');
+                    if (docDiv) {
+                        if (data.doctor_recommendations && data.doctor_recommendations.length > 0) {
+                            let html = '<h3>Specialist Doctor Recommendations:</h3><ul style="text-align:left;">';
+                            data.doctor_recommendations.forEach(doc => {
+                                html += `<li><strong>${doc.name}</strong> (${doc.specialty})<br>Hospital: ${doc.hospital}<br>Contact: ${doc.contact}</li>`;
+                            });
+                            html += '</ul>';
+                            docDiv.innerHTML = html;
+                            docDiv.style.display = 'block';
+                        } else {
+                            docDiv.innerHTML = '';
+                            docDiv.style.display = 'none';
+                        }
+                    }
+
+                    // Show confidence score if present
+                    const confidenceScore = data.confidence_score;
+                    if (typeof confidenceScore !== 'undefined') {
+                        detectionResult.textContent += `\nConfidence: ${confidenceScore}%`;
+                    }
+
                     if (historyList && (data.message || data.prediction_label)) {
                         const li = document.createElement('li');
-                        // Displaying the prediction label in history might be more concise
                         const resultText = data.prediction_label || data.message;
                         li.textContent = `${new Date().toLocaleString()}: ${resultText}`;
-                        historyList.prepend(li); // Add to the top of the list
+                        historyList.prepend(li);
+                    }
+
+                    // Show report actions after analysis
+                    const reportActions = document.getElementById('reportActions');
+                    if (reportActions) reportActions.style.display = 'flex';
+
+                    // Store analysis data for report generation
+                    window.latestAnalysisData = {
+                        prediction_label: data.prediction_label,
+                        confidence_score: data.confidence_score,
+                        datetime: new Date().toLocaleString(),
+                        highlighted_image_base64: data.highlighted_image_base64,
+                        // Get the original image as base64 from previewImage
+                        original_image_base64: previewImage.src.split(',')[1] || null
+                    };
+
+                    // Download Report Button
+                    const downloadBtn = document.getElementById('downloadReportBtn');
+                    if (downloadBtn) {
+                        downloadBtn.onclick = function() {
+                            fetch(`${API_BASE_URL}/generate_report`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(window.latestAnalysisData)
+                            })
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'BrainTumorReport.pdf';
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                window.URL.revokeObjectURL(url);
+                            });
+                        };
                     }
                 })
                 .catch(error => {
